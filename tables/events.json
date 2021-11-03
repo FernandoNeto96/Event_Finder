@@ -1,0 +1,12 @@
+[
+    {
+        "id": 1,
+        "title": "Teste da Aplicação",
+        "description": "Vamos testar o novo site do Bruno?",
+        "date": "2021-11-3",
+        "time": "14:30:00",
+        "creator": "admin",
+        "participants": ["admin", "bruno"],
+        "deleted": false
+    }
+]
