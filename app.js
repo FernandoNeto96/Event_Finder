@@ -52,13 +52,18 @@ app.post("/login", async (req, res) => {
 
                 const allSessions = await readFile(SESSIONS_PATH)
 
+                logged = true;
+
                 const session = {
                     sessionHash: cookieHash,
                     userId: userFound.id,
                     userType: userFound.userType,
+                    eventsRegistered: userFound.eventsRegistered,
                     create: timestamp,
-                    expire: timestamp + cookieLifetime
+                    expire: timestamp + cookieLifetime,
+                    logged:logged
                 }
+            
 
                 allSessions.push(session);
 
@@ -66,13 +71,9 @@ app.post("/login", async (req, res) => {
                     .then((data) => {
                         console.log("Sessão salva");
 
-                        logged = true;
+                        
 
-                        res.send({
-                            eventsRegistred: userFound.eventsRegistered,
-                            userType: userFound.userType,
-                            logged: logged
-                        });
+                        res.send( session );
                     })
                     .catch((error) => {
                         res.status(500).json({ "message": "Erro no servidor. Tente novamente mais tarde" });
@@ -248,7 +249,7 @@ app.get("/get-events/:eventId/generate-qrcode", async (req, res) => {
         const sessionFound = allSessions.find((element) => {
             return element.sessionHash === cookieSession;
         });
-
+               
         if (sessionFound !== undefined && sessionFound.expire > timestamp && sessionFound.create < timestamp) {
             const allQrcodes = await readFile(QRCODES_PATH);
             const dataToHash = `${eventId}${sessionFound.userId}`;
@@ -283,6 +284,9 @@ app.get("/get-events/:eventId/generate-qrcode", async (req, res) => {
         res.status(403).json({ "message": "Cookie inválido" })
     }
 });
+
+
+
 
 // -------------------- VALIDATE QRCODE --------------------
 
